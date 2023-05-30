@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Room 2</title>
+    <style>
+        * {
+            margin: 0 auto;
+            padding: 0;
+            list-style: none;
+        }
+
+        a {
+            text-decoration: none;
+            display: block;
+        }
+
+        body {
+            width: 1200px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            position: relative;
+        }
+
+        .title {
+            position: absolute;
+            left: 500px;
+        }
+
+        #form {
+            background: rgba(0, 0, 0, 0.15);
+            padding: 3px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            height: 48px;
+            box-sizing: border-box;
+            backdrop-filter: blur(10px);
+            width: 1200px;
+            height: 50px;
+        }
+
+        #input {
+            border: none;
+            padding: 0 16px;
+            flex-grow: 1;
+            border-radius: 32px;
+            margin: 3px;
+        }
+
+        #input:focus {
+            outline: none;
+        }
+
+        #form>button {
+            background: blue;
+            border: none;
+            padding: 0 16px;
+            margin: 3px;
+            border-radius: 3px;
+            outline: none;
+            color: #fff;
+        }
+
+        #messages {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            margin-bottom: 50px;
+        }
+
+        #messages>li {
+            padding: 8px 16px;
+        }
+
+        #messages>li:nth-child(odd) {
+            background: #efefef;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>2번방</h1>
+    <ul id="messages"></ul>
+    <form id="form" action="">
+        <input id="input" autocomplete="off" /><button>Send</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        socket.emit('join room', 'room2');
+
+        const messages = document.getElementById('messages');
+        const form = document.querySelector('form');
+        const input = document.getElementById('input');
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const message = input.value.trim();
+            if (message !== '') {
+                socket.emit('chat message', message);
+                input.value = '';
+            }
+            return false;
+        });
+
+        socket.on('chat message', function (msg) {
+            const item = document.createElement('li');
+            item.textContent = msg;
+            messages.appendChild(item);
+            window.scrollTo(0, document.body.scrollHeight);
+        });
+    </script>
+</body>
+
+</html>
